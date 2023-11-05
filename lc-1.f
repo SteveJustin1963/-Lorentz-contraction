@@ -41,3 +41,25 @@ VARIABLE CONTRACTED-LENGTH  \ Lorentz-contracted length in fixed-point represent
 ( Run the program )
 GET-INPUT
 CALCULATE-CONTRACTION
+
+
+\\\\\\\\\\\\\\\\\\\
+TI-84
+
+:ClrHome
+:Disp "Lorentz Contraction"
+:Input "Length (meters)=", L
+:Input "Velocity (m/s)=", V
+:Prompt C
+:If V>=C
+:   Disp "Invalid Input"
+:Else
+:   Disp "Original Length =", L
+:   Disp "Velocity =", V
+:   Disp "Speed of Light =", C
+:   Disp "Lorentz Contracted Length =", L/sqrt(1-(V^2/C^2))
+:End
+:Pause
+:ClrHome
+
+\\\\\\\\\\\\\\\\\\\\\\\\
