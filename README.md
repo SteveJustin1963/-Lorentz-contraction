@@ -22,6 +22,9 @@ Remember that fixed-point arithmetic is limited in precision and range. If you n
 
 The classical Lorentz contraction formula is:
 
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/4fef995f-af14-410d-b35c-f750ace55dc5)
+
+
 \[ L' = L \sqrt{1 - \left(\frac{v}{c}\right)^2} \]
 
 where:
@@ -38,28 +41,36 @@ The original formula includes a square root and a division, operations that can 
 2. **Constants**: The speed of light is approximated to fit within a 16-bit integer after accounting for the fixed-point scaling. Instead of \( 299792458 \), we use \( 29979 \) with the scaling factor already considered.
 
 3. **Velocity Squared**: We calculate \( v^2 \) as follows:
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/ea78da87-0791-496f-8aed-6e96e37b85a3)
 
 \[ v'^2 = (v \cdot FIXED\_POINT)^2 = (v \cdot 16384)^2 \]
 
 However, since we're using fixed-point representation, we then need to scale the result back down:
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/ccdf4fda-b148-4149-b7a5-0b9e5b41546c)
 
 \[ \frac{v'^2}{FIXED\_POINT} = \frac{(v \cdot 16384)^2}{16384} \]
 
 This effectively gives us \( v^2 \) in our fixed-point system.
 
-4. **Beta Factor**: This is \( \left(\frac{v}{c}\right)^2 \), which in fixed-point is represented as:
+4. **Beta Factor**: This is  ![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/4be04832-9404-4acd-9136-6f9bd495de99)
+\( \left(\frac{v}{c}\right)^2 \), which in fixed-point is represented as:
+
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/bace6090-7ff6-446c-ac9a-02409668b8e3)
 
 \[ \text{beta'} = \frac{v'^2}{(c \cdot FIXED\_POINT)^2} \]
 
 Again, after calculating \( v'^2 \), we divide by \( c'^2 \) (where \( c' \) is the speed of light in fixed-point) to get beta in fixed-point.
 
-5. **Lorentz Factor**: In full precision, it would be \( \sqrt{1 - \beta} \). We approximate this by avoiding the square root (since we don't have a simple fixed-point square root function) and instead calculate:
+5. **Lorentz Factor**: In full precision, it would be ![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/3ee2db9f-6ba0-43f8-976a-fa331dc5776a)
+ \( \sqrt{1 - \beta} \). We approximate this by avoiding the square root (since we don't have a simple fixed-point square root function) and instead calculate:
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/87e43cba-876c-4706-a678-8789c2c04db1)
 
 \[ \gamma' = FIXED\_POINT - \text{beta'} \]
 
 This is not the exact Lorentz factor but an approximation. The square root of values close to 1 can be approximated by \( 1 - \frac{1}{2}(1 - x) \) for small \( x \), which is somewhat similar to what's done here, but without the \( \frac{1}{2} \) scaling.
 
 6. **Lorentz Contraction**: The final length \( L' \) is calculated in fixed-point arithmetic:
+![image](https://github.com/SteveJustin1963/Lorentz-contraction/assets/58069246/bb19f1ab-1bb0-4e3f-adb9-1d2f0ef72108)
 
 \[ L' = L \cdot \gamma' \]
 
