@@ -1,5 +1,7 @@
 # Lorentz-contraction
 
+# Length
+
 code for 16-bit fixed-point arithmetic in Forth-83.
 
 1. **Constants and Conversion**: Constants should reflect the fixed-point representation. The speed of light constant needs to be in a fixed-point representation that fits within a 16-bit integer while maintaining the necessary precision.
