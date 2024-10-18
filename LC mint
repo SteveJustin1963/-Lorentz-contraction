@@ -1,0 +1,72 @@
+///////////////////////////
+16384 s !
+29979 c !
+
+:A * s / ;
+
+:B s * / ;
+
+:C 
+  " 0= ( ' 0 ) /E (                
+    " s / 1+ " 2/                  
+    /U (                           
+      % % B % + 2/                
+      2" =                         
+    )
+    ' s *                          
+  )
+;
+
+:D 
+  " s * c B
+  " A
+  s $ -
+  C
+  $ A
+  s / ;
+
+///////////////////////////
+
+// Fixed-point constants
+16384 s !           // Set scaling factor (2^14) for fixed-point representation
+29979 c !           // Set the scaled speed of light value
+
+// Fixed-point multiplication
+:A 
+  * s / ;               // Multiply n1 and n2, then divide by the scale factor to adjust
+
+// Fixed-point division
+:B 
+  s * / ;               // Multiply n1 by the scale factor, then divide by n2
+
+// Fixed-point square root using binary search method
+:C 
+  " 0= ( ' 0 ) /E (                // Check if n is zero, if so, return zero
+    " s / 1+ " 2/                  // Scale down n and set an initial guess for the square root
+    /U (                           // Begin an unlimited loop
+      % % B % + 2/                // Calculate (guess + n / guess) / 2
+      2" =                         // Repeat until the new guess equals the old guess
+    )
+    ' s *                          // Adjust the result back to fixed-point format
+  )
+;
+
+// Lorentz contraction calculation
+:D 
+  " s * c B         // Calculate (v / c) in fixed-point
+  " A               // Calculate (v/c)^2
+  s $ -             // Subtract (v/c)^2 from the scale factor (1 - (v/c)^2)
+  C                 // Take the square root of the result
+  $ A               // Multiply by the length l
+  s / ;             // Scale back down to get the final contracted length
+
+// run
+15000 1000 D
+
+// To check the result on the stack,  use: `.`
+// If you want to verify the scaling factor s, use: `s.`
+
+
+
+
+
