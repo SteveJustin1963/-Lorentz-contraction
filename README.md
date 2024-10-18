@@ -77,7 +77,7 @@ code for 16-bit fixed-point arithmetic in Forth-83.
 
 4. **Handling Large Numbers**: The program must ensure that multiplication and other operations do not exceed the 16-bit limit. If they do, it must handle overflow appropriately, potentially using the carry flag for large numbers.
 
-## LC MINT
+## code LC MINT
 This MINT code is implementing the Lorentz contraction formula using fixed-point arithmetic. It defines constants and functions to perform the necessary calculations while staying within the constraints of a fixed-point, 16-bit environment. Here’s an explanation of each part of the code:
 
 ### Constants
