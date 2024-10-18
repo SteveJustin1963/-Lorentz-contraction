@@ -77,69 +77,82 @@ code for 16-bit fixed-point arithmetic in Forth-83.
 
 4. **Handling Large Numbers**: The program must ensure that multiplication and other operations do not exceed the 16-bit limit. If they do, it must handle overflow appropriately, potentially using the carry flag for large numbers.
 
-## lc-1.f
+## LC MINT
+This MINT code is implementing the Lorentz contraction formula using fixed-point arithmetic. It defines constants and functions to perform the necessary calculations while staying within the constraints of a fixed-point, 16-bit environment. Here’s an explanation of each part of the code:
 
-This version of the program takes the user's input, converts it to fixed-point representation, calculates the Lorentz contraction using an approximation of the Lorentz factor, and then outputs the result in meters. The `LORENTZ-FACTOR` word would need to be filled in with an actual fixed-point square root operation or approximation suitable for your application.
-
-Remember that fixed-point arithmetic is limited in precision and range. If you need higher precision or must handle larger numbers, you might have to use a more complex number representation or switch to a Forth environment that supports floating-point arithmetic or larger integers.
-
-##  lc-2.f
-
-previous code contains a few potential errors and issues regarding the implementation of fixed-point arithmetic and handling of 16-bit integers without a carry flag. Here are some steps to correct the code:
-
-1. The constant for the speed of light is slightly off from the actual value. Since we're approximating, we can use `299792` as a scaled-down constant that fits within 16 bits.
-
-2. We're missing the definition of `S" "` which is used to create space-separated strings.
-
-3. The Lorentz contraction calculation is trying to use floating-point math, which is not available. We need to refactor the math to use fixed-point calculations.
-
-4. The code uses `2DUP` which duplicates the top two stack items, but it's not defined in standard Forth-83.
-
-5. `METER-TO-LENGTH` has been defined as a constant but never given a value.
-
-6. `INVERT` in the calculation is likely meant to be `1/SQRT`, but `SQRT` isn't a standard word in Forth-83, so we'll need to implement a fixed-point square root function or an approximation.
-
-corrected version:
-
-The fixed-point square root function (`FIXED-SQRT`) is left as a placeholder because implementing a square root algorithm in fixed-point arithmetic without floating-point support is non-trivial and would require a separate explanation.
-
-In addition, the program now properly uses `NUMBER` to convert the user input into a number and then scales it to fixed-point format by multiplying it with `METER-TO-LENGTH`. The velocity check now uses `U<` to compare the unsigned magnitude of the velocity against the speed of light. The main calculation correctly uses fixed-point arithmetic to perform the Lorentz contraction calculation, and `DISPLAY-RESULTS` is a separate word for better readability.
-
-`FIXED-SQRT`:
-
-Implementing a fixed-point square root function in Forth without a hardware floating-point unit can be done with an iterative algorithm, such as the Newton-Raphson method or a binary search method. Since we are using 16-bit fixed-point arithmetic, I'll illustrate a simple binary search square root method that converges on the integer square root of a number:
-
-```forth
-: FIXED-SQRT ( n -- sqrt(n) in fixed-point )
-  DUP 0= IF DROP 0 EXIT THEN  \ Return 0 for input 0
-  DUP 1+ DUP 2/          \ Initial guess is (n/2) + 1 to ensure it is not zero
-  BEGIN
-    OVER OVER / OVER + 2/  \ Calculate new guess: (guess + n / guess) / 2
-    2DUP = UNTIL          \ Repeat until the new guess is the same as the old guess
-  DROP ;
+### Constants
+```mint
+16384 s !     // Scaling factor (2^14) for fixed-point representation
+29979 c !     // Scaled speed of light value
 ```
+- **`s`**: This is the scaling factor used for converting real numbers to fixed-point representation. \( 16384 \) (or \( 2^{14} \)) represents 1.0 in fixed-point format.
+- **`c`**: This is the speed of light value, scaled to fit within the 16-bit range for fixed-point arithmetic.
 
-This code starts with an initial guess for the square root, which is half the input number plus one to ensure the guess is not zero. The loop repeatedly improves the guess based on the average of the guess and the input number divided by the guess. The loop continues until the guess no longer changes.
-
-However, this code doesn't handle fixed-point arithmetic specifically. Since you're using a fixed-point representation where 16384 represents 1.0, we need to adjust our square root function to account for this scaling. We'll also need to prevent overflow during the calculation. Here's how you could write a fixed-point square root function that accounts for the fixed-point scaling:
-
-```forth
-: FIXED-SQRT ( n -- sqrt(n) in fixed-point )
-  DUP 0= IF DROP 0 EXIT THEN
-  16384 OVER /   \ Adjust the input for fixed-point
-  1+ 2/          \ Initial guess is ((n/16384) / 2) + 1
-  BEGIN
-    OVER OVER / OVER + 2/  \ Calculate new guess
-    DUP 16384 * OVER < IF DROP OVER THEN \ Prevent overflow by scaling down if needed
-    2DUP = UNTIL           \ Repeat until the guess is stable
-  DROP 16384 * ;           \ Adjust the result back to fixed-point
+### Function `:A` - Fixed-Point Multiplication
+```mint
+:A 
+  * s / ;
 ```
+- This function multiplies two numbers and then scales the result back down using the fixed-point scaling factor `s`. It ensures that the result remains within the proper scale of fixed-point arithmetic.
 
-This function starts by adjusting the input `n` to a whole number by dividing by the fixed-point base (`16384`). Then it uses a similar binary search method as before but scales down the guess when it threatens to overflow. Finally, it scales the result back up to fixed-point format before returning it.
+### Function `:B` - Fixed-Point Division
+```mint
+:B 
+  s * / ;
+```
+- This function divides two numbers while scaling up the numerator by `s` to maintain precision. It ensures the division result stays consistent with the fixed-point format.
 
-Remember that due to the limited precision of 16-bit integers, this square root function will be an approximation. this might be good enough, but more precision need more complex algorithms 
+### Function `:C` - Fixed-Point Square Root Approximation
+```mint
+:C 
+  " 0= ( ' 0 ) /E (                
+    " s / 1+ " 2/                  
+    /U (                           
+      % % B % + 2/                
+      2" =                         
+    )
+    ' s *                          
+  )
+;
+```
+- This function calculates the square root of a number in fixed-point format. The code uses an iterative binary search method to approximate the square root:
+  - It checks if the input value is zero and, if so, returns zero.
+  - It then sets an initial guess for the square root and refines it using the formula \( \text{new\_guess} = \frac{\text{guess} + \frac{n}{\text{guess}}}{2} \).
+  - The loop continues until the guess stabilizes, indicating that the square root has been found.
+  - The result is then scaled back to fit the fixed-point format.
 
+### Function `:D` - Lorentz Contraction Calculation
+```mint
+:D 
+  " s * c B
+  " A
+  s $ -
+  C
+  $ A
+  s / ;
+```
+- This function calculates the Lorentz contraction using the fixed-point arithmetic approach:
+  1. **Calculate the ratio** \( \frac{v}{c} \) in fixed-point:
+     - Multiplies the velocity by the scaling factor and divides by the speed of light (`c`).
+  2. **Square the ratio** \( \left(\frac{v}{c}\right)^2 \):
+     - Uses function `A` to perform the fixed-point multiplication of this ratio with itself.
+  3. **Compute \( 1 - \left(\frac{v}{c}\right)^2 \)**:
+     - Subtracts the squared ratio from the scaling factor `s` (which represents 1.0 in fixed-point).
+  4. **Take the square root**:
+     - Uses function `C` to approximate the square root of the result.
+  5. **Multiply by the original length**:
+     - Multiplies the computed Lorentz factor by the input length using function `A`.
+  6. **Scale down the result**:
+     - Finally, divides by `s` to return the length contraction result in fixed-point format.
 
+### Summary
+The code implements the Lorentz contraction formula:
 
+\[
+L' = L \sqrt{1 - \left(\frac{v}{c}\right)^2}
+\]
 
+- **`s`** and **`c`** are constants adapted for fixed-point arithmetic.
+- The functions (`A`, `B`, `C`, and `D`) perform the necessary arithmetic operations (multiplication, division, square root approximation) in fixed-point to ensure calculations stay within the 16-bit constraints of the environment.
 
+The overall goal is to approximate the Lorentz contraction in a way that works within the limited precision of 16-bit fixed-point numbers while avoiding floating-point operations.
