@@ -1,7 +1,6 @@
 # Lorentz-contraction
 
-# Length
-## mathematical components adapted for fixed-point arithmetic 
+ 
 
 The classical Lorentz contraction formula is:
 
