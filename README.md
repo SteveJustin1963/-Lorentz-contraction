@@ -2,6 +2,8 @@ Here is a simple MINT program for calculating the Lorentz contraction:
 
 Given the Lorentz contraction formula:
 
+![image](https://github.com/user-attachments/assets/efa7aa21-4706-4f19-8288-8525385f61d1)
+
 `L = L0((1 - v2/c2))1/2`
 
   example in MINT:
