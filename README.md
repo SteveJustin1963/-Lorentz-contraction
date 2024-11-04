@@ -1,4 +1,4 @@
-Here is a simple MINT program for calculating the Lorentz contraction:
+Here is a simple (far from it) MINT program for calculating the Lorentz contraction:
 
 Given the Lorentz contraction formula:
 
