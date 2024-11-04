@@ -1,4 +1,4 @@
-https://github.com/SteveJustin1963/tec-MINT/
+https://github.com/SteveJustin1963/tec-MINT
 
 Here is a simple (far from it for MINT) program for calculating the Lorentz contraction:
 
