@@ -129,6 +129,7 @@ The AMD Am9511 Arithmetic Processing Unit would be perfect for this because it:
 
 ok asume we did , lets assum the 9511 in on port 0xc2
 
+sudo program is
 ```text
 :L
 0 n! 0 t! 0 v! 0 p! 0 s! 0 r! 0 q! 0 k! 0 /c!
@@ -161,6 +162,7 @@ Each /O sends to APU port 0xC2:
 
 using proper APU command bytes between operations 
 
+```
 :L
 2 #C2 /O         // Push v (2% of c)
 #B8 #C2 /O      // PTOF - convert to float
@@ -184,6 +186,7 @@ using proper APU command bytes between operations
 #C2 /I          // Read result
 . `/100`        // Display as ratio
 ;
+```
 
 The 9511 has an internal 8-level stack - we can use that more efficiently:
 
@@ -385,6 +388,7 @@ Each /O sends to APU port 0xC2:
 
 using proper APU command bytes between operations 
 
+```
 :L
 2 #C2 /O         // Push v (2% of c)
 #B8 #C2 /O      // PTOF - convert to float
@@ -408,7 +412,7 @@ using proper APU command bytes between operations
 #C2 /I          // Read result
 . `/100`        // Display as ratio
 ;
-
+```
 The 9511 has an internal 8-level stack - we can use that more efficiently:
 
 ```text
@@ -446,4 +450,4 @@ The " command duplicates top of 9511 stack instead of reloading values.
 
 now punch yourself in the balls!
 
-)
+ 
