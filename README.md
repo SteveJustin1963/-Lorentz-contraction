@@ -188,6 +188,6 @@ The 9511 has an internal 8-level stack - we can use that more efficiently:
 ```
  
 
-now puch yourself in the balls!
+now puch yourself in the nuts!
 
  
